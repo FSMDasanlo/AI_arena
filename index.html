@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Arena · Que gane la mejor inteligencia</title>
+    <link rel="icon" href="img/gemini.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="hero">
+        <img src="img/ai_arena.png" alt="AI Arena" class="hero-img">
+    </header>
+
+    <main>
+        <form id="duel-form" class="prompt-box">
+            <div class="prompt-head">
+                <label for="prompt">Tu pregunta para los contendientes</label>
+                <button type="submit" id="fight-btn">⚔️ ¡Al ruedo!</button>
+            </div>
+            <textarea id="prompt" rows="4" placeholder="Escribe aquí la pregunta del duelo… (Ctrl+Enter para lanzar)" required></textarea>
+            <div class="options">
+                <label class="attach" for="file-input" title="Adjuntar archivo de texto">📎 Adjuntar</label>
+                <input type="file" id="file-input" hidden accept=".txt,.md,.csv,.json,.xml,.html,.css,.js,.ts,.py,.java,.c,.cpp,.cs,.sql,.log,.yml,.yaml,text/*">
+                <span id="file-name" class="file-name"></span>
+                <button type="button" id="file-clear" class="link-btn" hidden title="Quitar archivo">✖</button>
+                <label class="lines" for="max-lines">Máx. líneas de respuesta
+                    <input type="number" id="max-lines" min="1" max="500" placeholder="sin límite">
+                </label>
+            </div>
+        </form>
+
+        <section class="arena">
+            <article class="card" id="card-groq">
+                <header>
+                    <img src="img/groq.png" alt="Groq">
+                    <div>
+                        <h2>Groq</h2>
+                        <small id="model-groq"></small>
+                    </div>
+                    <span class="badge" id="badge-groq"></span>
+                </header>
+                <div class="answer" id="answer-groq">Esperando pregunta…</div>
+            </article>
+
+            <article class="card" id="card-gemini">
+                <header>
+                    <img src="img/gemini.png" alt="Gemini">
+                    <div>
+                        <h2>Gemini</h2>
+                        <small id="model-gemini"></small>
+                    </div>
+                    <span class="badge" id="badge-gemini"></span>
+                </header>
+                <div class="answer" id="answer-gemini">Esperando pregunta…</div>
+            </article>
+        </section>
+
+        <p id="verdict" class="verdict" hidden></p>
+    </main>
+
+    <footer>AI Arena · Groq vs Gemini</footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+:root {
+    --bg: #0d0f1a;
+    --panel: #171a2b;
+    --border: #2a2f4a;
+    --text: #e8eaf6;
+    --muted: #8b90b0;
+    --accent: #ff4d4d;
+    --groq: #f55036;
+    --gemini: #4f8cff;
+    --win: #2ecc71;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: radial-gradient(circle at top, #1b1f3a 0%, var(--bg) 60%) fixed;
+    color: var(--text);
+    font-family: "Segoe UI", system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.hero { text-align: center; padding: 1.5rem 1rem 0.5rem; }
+.hero-img {
+    width: min(260px, 60%);
+    border-radius: 16px;
+    box-shadow: 0 0 40px rgba(255, 77, 77, 0.35);
+}
+.hero h1 { margin: 0.6rem 0 0; font-size: 2.6rem; letter-spacing: 2px; text-transform: uppercase; }
+.hero h1 span { color: var(--accent); }
+.slogan { margin: 0.2rem 0 0; color: var(--muted); font-style: italic; font-size: 1.1rem; }
+
+main { width: min(1100px, 100%); margin: 0 auto; padding: 1rem; flex: 1; }
+
+.prompt-box {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+.prompt-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.prompt-box label { font-weight: 600; }
+.options { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+.attach {
+    cursor: pointer;
+    background: #0f1120;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.4rem 0.9rem;
+    font-weight: 600;
+}
+.attach:hover { border-color: var(--accent); }
+.file-name { color: var(--muted); font-size: 0.9rem; overflow-wrap: anywhere; }
+.link-btn { background: none; padding: 0.2rem 0.5rem; color: var(--muted); font-size: 0.9rem; }
+.lines { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; font-weight: 400; color: var(--muted); }
+.lines input {
+    width: 7.5rem;
+    background: #0f1120;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.4rem 0.6rem;
+    font: inherit;
+}
+textarea {
+    width: 100%;
+    resize: vertical;
+    background: #0f1120;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.8rem;
+    font: inherit;
+}
+textarea:focus { outline: 2px solid var(--accent); }
+button {
+    align-self: flex-end;
+    background: var(--accent);
+    color: #fff;
+    border: 0;
+    border-radius: 10px;
+    padding: 0.7rem 1.6rem;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.1s, opacity 0.2s;
+}
+button:hover:not(:disabled) { transform: scale(1.04); }
+button:disabled { opacity: 0.5; cursor: wait; }
+
+.arena {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+@media (max-width: 760px) { .arena { grid-template-columns: 1fr; } }
+
+.card {
+    background: var(--panel);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    min-height: 280px;
+    overflow: hidden;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+#card-groq { border-top: 4px solid var(--groq); }
+#card-gemini { border-top: 4px solid var(--gemini); }
+.card.winner { border-color: var(--win); box-shadow: 0 0 24px rgba(46, 204, 113, 0.35); }
+.card.loading .answer { color: var(--muted); animation: pulse 1.2s infinite; }
+.card.error .answer { color: #ff7b7b; }
+
+.card header { display: flex; align-items: center; gap: 0.7rem; padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); }
+.card header img { width: 40px; height: 40px; object-fit: contain; border-radius: 8px; }
+.card h2 { margin: 0; font-size: 1.2rem; }
+.card small { color: var(--muted); }
+.badge {
+    margin-left: auto;
+    font-family: Consolas, monospace;
+    font-weight: 700;
+    background: #0f1120;
+    border-radius: 20px;
+    padding: 0.25rem 0.8rem;
+}
+.badge:empty { display: none; }
+.card.winner .badge { background: var(--win); color: #062b16; }
+
+.answer { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; flex: 1; overflow-y: auto; max-height: 60vh; }
+
+.verdict { text-align: center; font-size: 1.2rem; font-weight: 700; margin-top: 1rem; }
+
+footer { text-align: center; color: var(--muted); padding: 1rem; font-size: 0.85rem; }
+
+@keyframes pulse { 50% { opacity: 0.4; } }
