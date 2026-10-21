@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Arena · Diálogos</title>
+    <link rel="icon" href="img/gemini.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header class="hero">
+        <img src="img/ai_arena.png" alt="AI Arena 2" class="hero-img">
+    </header>
+
+    <main>
+        <p class="nav-link"><a href="index.html">← Volver al duelo</a></p>
+
+        <form id="dialog-form" class="prompt-box">
+            <div class="prompt-head">
+                <label>Careo: cada IA defiende su postura</label>
+                <span>
+                    <button type="submit" id="fight-btn">⚔️ ¡Al careo!</button>
+                    <button type="button" id="reset-btn" class="link-btn" title="Empezar un careo nuevo">🔄 Nuevo</button>
+                </span>
+            </div>
+            <div class="dual-inputs">
+                <div>
+                    <label for="prompt-groq">Groq</label>
+                    <textarea id="prompt-groq" rows="4" placeholder="Tema y postura que defiende Groq… (Ctrl+Enter para lanzar)"></textarea>
+                </div>
+                <div>
+                    <label for="prompt-gemini">Gemini</label>
+                    <textarea id="prompt-gemini" rows="4" placeholder="Tema y postura que defiende Gemini… (Ctrl+Enter para lanzar)"></textarea>
+                </div>
+            </div>
+            <div class="options">
+                <span id="round-info" class="file-name">Ronda 0</span>
+                <label class="lines" for="max-lines">Máx. líneas de respuesta
+                    <input type="number" id="max-lines" min="1" max="500" placeholder="sin límite">
+                </label>
+            </div>
+            <small class="hint">Tras la primera ronda, cada IA recibe la última respuesta de la otra. Lo que escribas en su caja se añade como matiz (opcional).</small>
+        </form>
+
+        <section class="arena">
+            <article class="card" id="card-groq">
+                <header>
+                    <img src="img/groq.png" alt="Groq">
+                    <div>
+                        <h2>Groq</h2>
+                        <small id="model-groq"></small>
+                    </div>
+                    <span class="badge" id="badge-groq"></span>
+                    <button type="button" class="copy-btn" id="copy-groq" title="Copiar última respuesta" aria-label="Copiar última respuesta de Groq" disabled>📋</button>
+                </header>
+                <div class="answer" id="answer-groq">Esperando…</div>
+            </article>
+
+            <article class="card" id="card-gemini">
+                <header>
+                    <img src="img/gemini.png" alt="Gemini">
+                    <div>
+                        <h2>Gemini</h2>
+                        <small id="model-gemini"></small>
+                    </div>
+                    <span class="badge" id="badge-gemini"></span>
+                    <button type="button" class="copy-btn" id="copy-gemini" title="Copiar última respuesta" aria-label="Copiar última respuesta de Gemini" disabled>📋</button>
+                </header>
+                <div class="answer" id="answer-gemini">Esperando…</div>
+            </article>
+        </section>
+    </main>
+
+    <footer>AI Arena · Groq vs Gemini · Diálogos</footer>
+
+    <script src="js/config.js"></script>
+    <script src="js/dialogos.js"></script>
+</body>
+</html>

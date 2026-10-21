@@ -13,6 +13,7 @@
     </header>
 
     <main>
+        <p class="nav-link"><a href="dialogos.html">💬 Ir a los diálogos (careo entre IA) →</a></p>
         <form id="duel-form" class="prompt-box">
             <div class="prompt-head">
                 <label for="prompt">Tu pregunta para los contendientes</label>
@@ -39,6 +40,7 @@
                         <small id="model-groq"></small>
                     </div>
                     <span class="badge" id="badge-groq"></span>
+                    <button type="button" class="copy-btn" id="copy-groq" title="Copiar respuesta" aria-label="Copiar respuesta de Groq" disabled>📋</button>
                 </header>
                 <div class="answer" id="answer-groq">Esperando pregunta…</div>
             </article>
@@ -51,6 +53,7 @@
                         <small id="model-gemini"></small>
                     </div>
                     <span class="badge" id="badge-gemini"></span>
+                    <button type="button" class="copy-btn" id="copy-gemini" title="Copiar respuesta" aria-label="Copiar respuesta de Gemini" disabled>📋</button>
                 </header>
                 <div class="answer" id="answer-gemini">Esperando pregunta…</div>
             </article>

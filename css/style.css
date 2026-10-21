@@ -154,6 +154,26 @@ button:disabled { opacity: 0.5; cursor: wait; }
 }
 .badge:empty { display: none; }
 .card.winner .badge { background: var(--win); color: #062b16; }
+.dual-inputs { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+@media (max-width: 700px) { .dual-inputs { grid-template-columns: 1fr; } }
+.hint { color: #454b66; display: block; margin-top: 0.5rem; }
+.nav-link { margin: 0 0 1rem; }
+.nav-link a { color: inherit; }
+.turn + .turn { margin-top: 1rem; padding-top: 0.8rem; border-top: 1px dashed var(--border); }
+.turn > strong { color: var(--muted); font-size: 0.85rem; }
+.copy-btn {
+    background: #0f1120;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.3rem 0.5rem;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: inherit;
+}
+.copy-btn:hover:not(:disabled) { border-color: var(--win); }
+.copy-btn:disabled { opacity: 0.4; cursor: default; }
+.badge:empty + .copy-btn { margin-left: auto; }
 
 .answer { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; flex: 1; overflow-y: auto; max-height: 60vh; }
 

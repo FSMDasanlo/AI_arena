@@ -68,6 +68,33 @@ function formatTime(ms) {
     return ms < 1000 ? `${Math.round(ms)} ms` : `${(ms / 1000).toFixed(2)} s`;
 }
 
+const answers = {};
+
+async function copyAnswer(id) {
+    const btn = $(`copy-${id}`);
+    const text = answers[id];
+    if (!text) return;
+    try {
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+        } else {
+            const ta = document.createElement("textarea");
+            ta.value = text;
+            ta.style.position = "fixed";
+            ta.style.opacity = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            const ok = document.execCommand("copy");
+            ta.remove();
+            if (!ok) throw new Error("copy failed");
+        }
+        btn.textContent = "✅";
+    } catch {
+        btn.textContent = "❌";
+    }
+    setTimeout(() => (btn.textContent = "📋"), 1500);
+}
+
 async function runFighter(f, prompt, maxLines) {
     const card = $(`card-${f.id}`);
     const answer = $(`answer-${f.id}`);
@@ -76,6 +103,8 @@ async function runFighter(f, prompt, maxLines) {
     card.classList.remove("winner", "error");
     card.classList.add("loading");
     badge.textContent = "";
+    answers[f.id] = "";
+    $(`copy-${f.id}`).disabled = true;
     answer.textContent = "Pensando…";
 
     const start = performance.now();
@@ -88,6 +117,8 @@ async function runFighter(f, prompt, maxLines) {
         const ms = performance.now() - start;
         answer.textContent = `⏱ ${formatTime(ms)}\n\n${text}`;
         badge.textContent = formatTime(ms);
+        answers[f.id] = text;
+        $(`copy-${f.id}`).disabled = false;
         return { id: f.id, ms, ok: true };
     } catch (err) {
         const ms = performance.now() - start;
@@ -173,6 +204,7 @@ async function onFileSelected(e) {
 
 document.addEventListener("DOMContentLoaded", () => {
     fighters.forEach((f) => ($(`model-${f.id}`).textContent = f.model));
+    fighters.forEach((f) => $(`copy-${f.id}`).addEventListener("click", () => copyAnswer(f.id)));
     $("file-input").addEventListener("change", onFileSelected);
     $("file-clear").addEventListener("click", () => setAttachment(null));
 
