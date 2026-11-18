@@ -21,10 +21,11 @@
             </div>
             <textarea id="prompt" rows="4" placeholder="Escribe aquí la pregunta del duelo… (Ctrl+Enter para lanzar)" required></textarea>
             <div class="options">
-                <label class="attach" for="file-input" title="Adjuntar archivo de texto">📎 Adjuntar</label>
-                <input type="file" id="file-input" hidden accept=".txt,.md,.csv,.json,.xml,.html,.css,.js,.ts,.py,.java,.c,.cpp,.cs,.sql,.log,.yml,.yaml,text/*">
+                <label class="attach" for="file-input" title="Adjuntar archivo de texto o imagen JPG/PNG">📎 Adjuntar</label>
+                <input type="file" id="file-input" hidden accept=".txt,.md,.csv,.json,.xml,.html,.css,.js,.ts,.py,.java,.c,.cpp,.cs,.sql,.log,.yml,.yaml,text/*,.jpg,.jpeg,.png,image/jpeg,image/png">
                 <span id="file-name" class="file-name"></span>
                 <button type="button" id="file-clear" class="link-btn" hidden title="Quitar archivo">✖</button>
+                <span class="file-name">Imágenes JPG/PNG: solo responde Gemini.</span>
                 <label class="lines" for="max-lines">Máx. líneas de respuesta
                     <input type="number" id="max-lines" min="1" max="500" placeholder="sin límite">
                 </label>
