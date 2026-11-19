@@ -6,8 +6,6 @@ const GROQ_MODEL = CONFIG.groqModel || "openai/gpt-oss-120b";
 const GEMINI_MODEL = CONFIG.geminiModel || "gemini-3.5-flash-lite";
 
 const TIMEOUT_MS = 120000;
-const MAX_FILE_BYTES = 200 * 1024;
-
 const fighters = [
     {
         id: "groq",
@@ -33,7 +31,12 @@ const fighters = [
     {
         id: "gemini",
         model: GEMINI_MODEL,
-        ask: async (prompt, signal) => {
+        ask: async (prompt, signal, images) => {
+            const parts = [{ text: prompt }];
+            for (const image of images) {
+                parts.push({ text: `Imagen adjunta: ${image.name}` });
+                parts.push({ inlineData: { mimeType: image.mimeType, data: image.data } });
+            }
             const res = await fetch(
                 `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
                 {
@@ -43,12 +46,12 @@ const fighters = [
                         "Content-Type": "application/json",
                         "x-goog-api-key": CONFIG.geminiApiKey,
                     },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+                    body: JSON.stringify({ contents: [{ parts }] }),
                 }
             );
             const data = await readJson(res);
-            const parts = data.candidates?.[0]?.content?.parts;
-            return parts?.map((p) => p.text).join("") || "(respuesta vacía)";
+            const responseParts = data.candidates?.[0]?.content?.parts;
+            return responseParts?.map((p) => p.text).join("") || "(respuesta vacía)";
         },
         hasKey: () => !!CONFIG.geminiApiKey,
     },
@@ -95,7 +98,7 @@ async function copyAnswer(id) {
     setTimeout(() => (btn.textContent = "📋"), 1500);
 }
 
-async function runFighter(f, prompt, maxLines) {
+async function runFighter(f, prompt, maxLines, attachment) {
     const card = $(`card-${f.id}`);
     const answer = $(`answer-${f.id}`);
     const badge = $(`badge-${f.id}`);
@@ -105,6 +108,11 @@ async function runFighter(f, prompt, maxLines) {
     badge.textContent = "";
     answers[f.id] = "";
     $(`copy-${f.id}`).disabled = true;
+    if (f.id === "groq" && attachment?.images.length && !attachment.text) {
+        card.classList.remove("loading");
+        answer.textContent = "Groq no participa: el adjunto solo contiene imágenes.";
+        return { id: f.id, ok: false };
+    }
     answer.textContent = "Pensando…";
 
     const start = performance.now();
@@ -113,7 +121,7 @@ async function runFighter(f, prompt, maxLines) {
     }, 500);
     try {
         if (!f.hasKey()) throw new Error("Falta la API key en js/config.js");
-        const text = limitLines(await f.ask(prompt, AbortSignal.timeout(TIMEOUT_MS)), maxLines);
+        const text = limitLines(await f.ask(prompt, AbortSignal.timeout(TIMEOUT_MS), attachment?.images || []), maxLines);
         const ms = performance.now() - start;
         answer.textContent = `⏱ ${formatTime(ms)}\n\n${text}`;
         badge.textContent = formatTime(ms);
@@ -133,25 +141,35 @@ async function runFighter(f, prompt, maxLines) {
 }
 
 async function fight(question) {
+    if (processingFile) return;
     const btn = $("fight-btn");
     const verdict = $("verdict");
     const maxLines = getMaxLines();
-    const prompt = buildPrompt(question, maxLines);
+    const attachment = attachedFile;
+    const prompt = buildPrompt(question, maxLines, attachment);
     btn.disabled = true;
+    $("file-input").disabled = true;
+    $("file-clear").disabled = true;
     verdict.hidden = true;
     document.querySelectorAll(".card").forEach((c) => c.classList.remove("winner"));
 
-    const results = await Promise.all(fighters.map((f) => runFighter(f, prompt, maxLines)));
+    const results = await Promise.all(fighters.map((f) => runFighter(f, prompt, maxLines, attachment)));
 
     const valid = results.filter((r) => r.ok).sort((a, b) => a.ms - b.ms);
-    if (valid.length) {
+    if (valid.length && attachment?.images.length && !attachment.text) {
+        verdict.textContent = "Solo Gemini ha participado porque el adjunto contiene únicamente imágenes.";
+        verdict.hidden = false;
+    } else if (valid.length) {
         const w = valid[0];
         $(`card-${w.id}`).classList.add("winner");
         const name = w.id === "groq" ? "Groq" : "Gemini";
         verdict.textContent = `🏆 ${name} ha sido la más rápida (${formatTime(w.ms)}). ¿Y la mejor respuesta? Eso lo decides tú.`;
+        if (attachment?.images.length) verdict.textContent += " Groq no recibe las imágenes.";
         verdict.hidden = false;
     }
     btn.disabled = false;
+    $("file-input").disabled = false;
+    $("file-clear").disabled = false;
 }
 
 function getMaxLines() {
@@ -160,10 +178,10 @@ function getMaxLines() {
 }
 
 // Pide el límite en el prompt y además lo aplica al mostrar, por si el modelo no obedece
-function buildPrompt(question, maxLines) {
+function buildPrompt(question, maxLines, attachment) {
     let prompt = question;
-    if (attachedFile) {
-        prompt += `\n\nContenido del archivo adjunto "${attachedFile.name}":\n"""\n${attachedFile.text}\n"""`;
+    if (attachment?.text) {
+        prompt += `\n\n${attachment.text}`;
     }
     if (maxLines) {
         prompt += `\n\nResponde en un máximo de ${maxLines} líneas.`;
@@ -179,10 +197,13 @@ function limitLines(text, maxLines) {
 }
 
 let attachedFile = null;
+let processingFile = false;
+let selectionVersion = 0;
 
 function setAttachment(file) {
     attachedFile = file;
     $("file-name").textContent = file ? `📄 ${file.name}` : "";
+    $("file-warning").textContent = file ? file.warnings.join("\n") : "";
     $("file-clear").hidden = !file;
     if (!file) $("file-input").value = "";
 }
@@ -190,23 +211,39 @@ function setAttachment(file) {
 async function onFileSelected(e) {
     const file = e.target.files[0];
     if (!file) return;
-    if (file.size > MAX_FILE_BYTES) {
-        alert(`El archivo supera ${MAX_FILE_BYTES / 1024} KB.`);
-        return setAttachment(null);
+    const version = ++selectionVersion;
+    setAttachment(null);
+    processingFile = true;
+    $("fight-btn").disabled = true;
+    $("file-name").textContent = `Procesando ${file.name}…`;
+    $("file-clear").hidden = false;
+    try {
+        if (!window.ArenaAttachments) throw new Error("Faltan las dependencias de archivos. Ejecuta npm install y npm run build.");
+        const attachment = await window.ArenaAttachments.readAttachment(file);
+        if (version === selectionVersion) setAttachment(attachment);
+    } catch (error) {
+        if (version === selectionVersion) {
+            setAttachment(null);
+            alert(`No se ha podido procesar el archivo: ${error.message}`);
+        }
+    } finally {
+        if (version === selectionVersion) {
+            processingFile = false;
+            $("fight-btn").disabled = false;
+        }
     }
-    const text = await file.text();
-    if (text.includes("\u0000")) {
-        alert("Solo se admiten archivos de texto (txt, md, csv, json, código…).");
-        return setAttachment(null);
-    }
-    setAttachment({ name: file.name, text });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     fighters.forEach((f) => ($(`model-${f.id}`).textContent = f.model));
     fighters.forEach((f) => $(`copy-${f.id}`).addEventListener("click", () => copyAnswer(f.id)));
     $("file-input").addEventListener("change", onFileSelected);
-    $("file-clear").addEventListener("click", () => setAttachment(null));
+    $("file-clear").addEventListener("click", () => {
+        selectionVersion++;
+        processingFile = false;
+        $("fight-btn").disabled = false;
+        setAttachment(null);
+    });
 
     $("duel-form").addEventListener("submit", (e) => {
         e.preventDefault();

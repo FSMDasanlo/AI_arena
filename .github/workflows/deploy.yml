@@ -25,6 +25,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Build attachment processing
+        run: |
+          npm ci
+          npm test
+          npm run build
+          rm -rf node_modules
+
       - name: Generate config.js from secrets
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

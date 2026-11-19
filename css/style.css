@@ -78,6 +78,7 @@ main { width: min(1100px, 100%); margin: 0 auto; padding: 1rem; flex: 1; }
 }
 .attach:hover { border-color: var(--accent); background: #fff8f8; }
 .file-name { color: #454b66; font-size: 0.9rem; overflow-wrap: anywhere; }
+.file-warning { color: #ffd08a; font-size: 0.9rem; white-space: pre-wrap; overflow-wrap: anywhere; }
 .link-btn { background: none; padding: 0.2rem 0.5rem; color: #454b66; font-size: 0.9rem; }
 .lines { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: #303650; }
 .lines input {

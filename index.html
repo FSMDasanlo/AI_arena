@@ -17,19 +17,20 @@
         <form id="duel-form" class="prompt-box">
             <div class="prompt-head">
                 <label for="prompt">Tu pregunta para los contendientes</label>
-                <button type="submit" id="fight-btn">⚔️ ¡Al ruedo!</button>
+                <button type="submit" id="fight-btn">⚔️ ¡Dale!</button>
             </div>
             <textarea id="prompt" rows="4" placeholder="Escribe aquí la pregunta del duelo… (Ctrl+Enter para lanzar)" required></textarea>
             <div class="options">
-                <label class="attach" for="file-input" title="Adjuntar archivo de texto o imagen JPG/PNG">📎 Adjuntar</label>
-                <input type="file" id="file-input" hidden accept=".txt,.md,.csv,.json,.xml,.html,.css,.js,.ts,.py,.java,.c,.cpp,.cs,.sql,.log,.yml,.yaml,text/*,.jpg,.jpeg,.png,image/jpeg,image/png">
+                <label class="attach" for="file-input" title="Adjuntar texto, PDF, ZIP o imagen JPG/PNG">📎 Adjuntar</label>
+                <input type="file" id="file-input" hidden accept=".txt,.md,.csv,.json,.xml,.html,.css,.js,.ts,.py,.java,.c,.cpp,.cs,.sql,.log,.yml,.yaml,text/*,.pdf,.zip,.jpg,.jpeg,.png,image/jpeg,image/png">
                 <span id="file-name" class="file-name"></span>
                 <button type="button" id="file-clear" class="link-btn" hidden title="Quitar archivo">✖</button>
-                <span class="file-name">Imágenes JPG/PNG: solo responde Gemini.</span>
+                <span class="file-name">Imágenes JPG/PNG: solo las analiza Gemini.</span>
                 <label class="lines" for="max-lines">Máx. líneas de respuesta
                     <input type="number" id="max-lines" min="1" max="500" placeholder="sin límite">
                 </label>
             </div>
+            <div id="file-warning" class="file-warning" role="status" aria-live="polite"></div>
         </form>
 
         <section class="arena">
@@ -66,6 +67,7 @@
     <footer>AI Arena · Groq vs Gemini</footer>
 
     <script src="js/config.js"></script>
+    <script src="dist/attachments.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
