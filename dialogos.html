@@ -36,7 +36,7 @@
             <div class="options">
                 <span id="round-info" class="file-name">Ronda 0</span>
                 <label class="lines" for="max-lines">Máx. líneas de respuesta
-                    <input type="number" id="max-lines" min="1" max="500" placeholder="sin límite">
+                    <input type="number" id="max-lines" min="1" max="500" value="5" placeholder="sin límite">
                 </label>
             </div>
             <small class="hint">Tras la primera ronda, cada IA recibe la última respuesta de la otra. Lo que escribas en su caja se añade como matiz (opcional).</small>
@@ -52,6 +52,7 @@
                     </div>
                     <span class="badge" id="badge-groq"></span>
                     <button type="button" class="copy-btn" id="copy-groq" title="Copiar última respuesta" aria-label="Copiar última respuesta de Groq" disabled>📋</button>
+                    <button type="button" class="retry-btn" id="retry-groq" hidden>🔄 Reintentar</button>
                 </header>
                 <div class="answer" id="answer-groq">Esperando…</div>
             </article>
@@ -65,6 +66,7 @@
                     </div>
                     <span class="badge" id="badge-gemini"></span>
                     <button type="button" class="copy-btn" id="copy-gemini" title="Copiar última respuesta" aria-label="Copiar última respuesta de Gemini" disabled>📋</button>
+                    <button type="button" class="retry-btn" id="retry-gemini" hidden>🔄 Reintentar</button>
                 </header>
                 <div class="answer" id="answer-gemini">Esperando…</div>
             </article>

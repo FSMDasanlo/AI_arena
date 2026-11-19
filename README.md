@@ -31,3 +31,10 @@ El texto se envía a Groq y Gemini; las imágenes solo se envían a Gemini. Si e
 adjunto contiene únicamente imágenes, solo responde Gemini. En ZIP mixtos, Groq
 responde al texto y Gemini recibe el texto y las imágenes. El modo de diálogos
 no admite archivos adjuntos.
+
+## Diálogos
+
+Cada ronda envía a cada IA la última respuesta de la otra. Si alguna respuesta
+falla, usa «Reintentar» en su tarjeta: se repite la misma petición sin volver a
+consultar a la IA que ya respondió. La siguiente ronda estará disponible cuando
+ambas hayan respondido; también puedes empezar un careo nuevo.

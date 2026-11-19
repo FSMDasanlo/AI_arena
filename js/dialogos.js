@@ -57,7 +57,7 @@ const fighters = [
     },
 ];
 
-const state = { round: 0, running: false, history: {}, last: {} };
+const state = { round: 0, running: false, history: {}, last: {}, pending: null };
 
 async function readJson(res) {
     const data = await res.json().catch(() => ({}));
@@ -98,7 +98,7 @@ function buildMessage(f, round, maxLines) {
 
 function appendTurn(id, round, content, cls = "") {
     const answer = $(`answer-${id}`);
-    if (state.round === 1 && round === 1) answer.textContent = "";
+    if (state.round === 0 && round === 1) answer.textContent = "";
     const div = document.createElement("div");
     div.className = `turn ${cls}`;
     const h = document.createElement("strong");
@@ -111,7 +111,7 @@ function appendTurn(id, round, content, cls = "") {
     return p;
 }
 
-async function runFighter(f, round, maxLines) {
+async function runFighter(f, request, maxLines) {
     const card = $(`card-${f.id}`);
     const badge = $(`badge-${f.id}`);
     card.classList.remove("error");
@@ -119,9 +119,8 @@ async function runFighter(f, round, maxLines) {
     badge.textContent = "";
     $(`copy-${f.id}`).disabled = true;
 
-    const userMsg = buildMessage(f, round, maxLines);
-    const history = [...(state.history[f.id] || []), { role: "user", content: userMsg }];
-    const slot = appendTurn(f.id, round, "Pensando…");
+    const { history, slot } = request;
+    slot.textContent = "Pensando…";
     const start = performance.now();
     const ticker = setInterval(() => {
         slot.textContent = `Pensando… ${((performance.now() - start) / 1000).toFixed(0)} s`;
@@ -134,12 +133,14 @@ async function runFighter(f, round, maxLines) {
         badge.textContent = formatTime(ms);
         state.history[f.id] = [...history, { role: "assistant", content: text }];
         state.last[f.id] = text;
+        request.done = true;
         $(`copy-${f.id}`).disabled = false;
         return true;
     } catch (err) {
         card.classList.add("error");
         const msg = err.name === "TimeoutError" ? "Sin respuesta tras 120 s" : err.message;
         slot.textContent = `❌ Error: ${msg}`;
+        $(`copy-${f.id}`).disabled = !state.last[f.id];
         return false;
     } finally {
         clearInterval(ticker);
@@ -147,40 +148,64 @@ async function runFighter(f, round, maxLines) {
     }
 }
 
+function updateRoundControls() {
+    const pending = state.pending;
+    $("fight-btn").disabled = state.running || !!pending;
+    $("reset-btn").disabled = state.running;
+    $("max-lines").disabled = state.running || !!pending;
+    fighters.forEach((f) => {
+        $(`prompt-${f.id}`).disabled = state.running || !!pending;
+        const retry = $(`retry-${f.id}`);
+        retry.hidden = state.running || !pending || pending.requests[f.id].done;
+        retry.disabled = state.running;
+    });
+}
+
+function finishRound() {
+    const pending = state.pending;
+    if (fighters.every((f) => pending.requests[f.id].done)) {
+        state.round = pending.round;
+        state.pending = null;
+        $("round-info").textContent = `Ronda ${state.round} completada`;
+        $("fight-btn").textContent = "🔁 Siguiente ronda";
+        fighters.forEach((f) => ($(`prompt-${f.id}`).value = ""));
+        fighters.forEach((f) => ($(`prompt-${f.id}`).placeholder = "Matiz opcional para la siguiente réplica…"));
+    } else {
+        $("round-info").textContent = `Ronda ${pending.round} incompleta: reintenta las respuestas fallidas`;
+    }
+    state.running = false;
+    updateRoundControls();
+}
+
 async function nextRound() {
-    if (state.running) return;
+    if (state.running || state.pending) return;
     const round = state.round + 1;
     if (round === 1 && !($("prompt-groq").value.trim() && $("prompt-gemini").value.trim())) {
         alert("Escribe el planteamiento para las dos IA.");
         return;
     }
-    state.running = true;
-    $("fight-btn").disabled = true;
-    state.round = round;
-    const results = await Promise.all(fighters.map((f) => runFighter(f, round, getMaxLines())));
-    // Si una IA falla, la ronda no cuenta: se puede reintentar sin perder el hilo
-    if (results.every(Boolean)) {
-        $("round-info").textContent = `Ronda ${round} completada`;
-        $("fight-btn").textContent = "🔁 Siguiente ronda";
-        fighters.forEach((f) => ($(`prompt-${f.id}`).value = ""));
-        fighters.forEach((f) => ($(`prompt-${f.id}`).placeholder = "Matiz opcional para la siguiente réplica…"));
-    } else {
-        state.round = round - 1;
-        $("round-info").textContent = "Ronda fallida: revisa el error y reintenta";
-        if (round > 1) rollbackPartial(results);
+    const maxLines = getMaxLines();
+    const requests = {};
+    for (const f of fighters) {
+        requests[f.id] = {
+            history: [...(state.history[f.id] || []), { role: "user", content: buildMessage(f, round, maxLines) }],
+            slot: appendTurn(f.id, round, "Pensando…"),
+            done: false,
+        };
     }
-    $("fight-btn").disabled = false;
-    state.running = false;
+    state.pending = { round, maxLines, requests };
+    state.running = true;
+    updateRoundControls();
+    await Promise.all(fighters.map((f) => runFighter(f, requests[f.id], maxLines)));
+    finishRound();
 }
 
-// Mantiene sincronizados los historiales si solo una IA respondió
-function rollbackPartial(results) {
-    fighters.forEach((f, i) => {
-        if (results[i]) {
-            state.history[f.id] = state.history[f.id].slice(0, -2);
-            state.last[f.id] = state.history[f.id].at(-1)?.content;
-        }
-    });
+async function retryFighter(f) {
+    if (state.running || !state.pending || state.pending.requests[f.id].done) return;
+    state.running = true;
+    updateRoundControls();
+    await runFighter(f, state.pending.requests[f.id], state.pending.maxLines);
+    finishRound();
 }
 
 function resetAll() {
@@ -188,6 +213,7 @@ function resetAll() {
     state.round = 0;
     state.history = {};
     state.last = {};
+    state.pending = null;
     fighters.forEach((f) => {
         $(`answer-${f.id}`).textContent = "Esperando…";
         $(`badge-${f.id}`).textContent = "";
@@ -198,6 +224,7 @@ function resetAll() {
     });
     $("round-info").textContent = "Ronda 0";
     $("fight-btn").textContent = "⚔️ ¡Al careo!";
+    updateRoundControls();
 }
 
 async function copyAnswer(id) {
@@ -229,6 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
     fighters.forEach((f) => {
         $(`model-${f.id}`).textContent = f.model;
         $(`copy-${f.id}`).addEventListener("click", () => copyAnswer(f.id));
+        $(`retry-${f.id}`).addEventListener("click", () => retryFighter(f));
         $(`prompt-${f.id}`).addEventListener("keydown", (e) => {
             if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
                 e.preventDefault();

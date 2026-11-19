@@ -175,6 +175,8 @@ button:disabled { opacity: 0.5; cursor: wait; }
 .copy-btn:hover:not(:disabled) { border-color: var(--win); }
 .copy-btn:disabled { opacity: 0.4; cursor: default; }
 .badge:empty + .copy-btn { margin-left: auto; }
+.retry-btn { padding: 0.4rem 0.6rem; font-size: 0.85rem; }
+.retry-btn[hidden] { display: none; }
 
 .answer { padding: 1rem; white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.5; flex: 1; overflow-y: auto; max-height: 60vh; }
 
