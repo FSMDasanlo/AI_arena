@@ -55,6 +55,15 @@ main { width: min(1100px, 100%); margin: 0 auto; padding: 1rem; flex: 1; }
     border-radius: 13px 13px 0 0;
 }
 .prompt-head label { color: #171a2b; font-size: 1.15rem; }
+#duel-form .prompt-head { padding-top: 0.3rem; padding-bottom: 0.3rem; }
+.careo-link {
+    display: inline-block;
+    border-radius: 12px;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+.careo-link img { display: block; width: 68px; height: 68px; border-radius: 12px; }
+.careo-link:hover { transform: scale(1.05); box-shadow: 0 3px 12px rgba(48, 62, 120, 0.35); }
+.careo-link:focus-visible { outline: 2px solid #303e78; outline-offset: 3px; }
 #fight-btn { align-self: center; box-shadow: 0 3px 12px rgba(110, 25, 35, 0.3); }
 .prompt-box label { font-weight: 600; }
 .options {
@@ -185,3 +194,162 @@ button:disabled { opacity: 0.5; cursor: wait; }
 footer { text-align: center; color: var(--muted); padding: 1rem; font-size: 0.85rem; }
 
 @keyframes pulse { 50% { opacity: 0.4; } }
+
+.dialogos-page {
+    background:
+        radial-gradient(ellipse at 50% 0, rgba(55, 68, 126, 0.28), transparent 42%),
+        var(--bg);
+}
+.dialogos-page .hero { padding: 0.8rem 1rem 0; }
+.dialogos-page .hero-img {
+    width: min(190px, 52%);
+    border-radius: 12px;
+    box-shadow: 0 0 34px rgba(100, 120, 255, 0.18);
+}
+.dialogos-page main { width: min(1080px, 100%); padding-top: 0.6rem; }
+.dialogos-page .nav-link { margin: 0 0 1.3rem; }
+.dialogos-page .nav-link a {
+    color: #b6c4ee;
+    text-decoration: none;
+    font-size: 0.92rem;
+}
+.dialogos-page .nav-link a:hover { color: #fff; }
+.dialog-intro { margin: 0 0 1.6rem; }
+.dialog-eyebrow, .step-label {
+    color: #9aa9ef;
+    font-size: 0.74rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+}
+.dialog-intro h1 {
+    margin: 0.55rem 0 0.35rem;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+}
+.dialog-intro h1 span {
+    color: #9daeff;
+}
+.dialog-intro p {
+    max-width: 650px;
+    margin: 0.6rem 0 0;
+    color: #a7aecb;
+    line-height: 1.6;
+}
+.dialogos-page .prompt-box {
+    gap: 1rem;
+    padding: 1.2rem;
+    background: linear-gradient(145deg, rgba(27, 31, 53, 0.98), rgba(20, 23, 40, 0.98));
+    border-color: #343a5d;
+    border-radius: 18px;
+    box-shadow: 0 18px 55px rgba(0, 0, 0, 0.22);
+}
+.dialogos-page .prompt-head {
+    margin: -1.2rem -1.2rem 0;
+    padding: 1.15rem 1.2rem;
+    background: transparent;
+    border-bottom: 1px solid #343a5d;
+    border-radius: 17px 17px 0 0;
+}
+.prompt-title h2 {
+    margin: 0.3rem 0 0;
+    font-size: 1.25rem;
+}
+.prompt-title p {
+    margin: 0.25rem 0 0;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+.dialogos-page #fight-btn {
+    align-self: auto;
+    padding: 0.72rem 1.1rem;
+    background: linear-gradient(120deg, #7777ff, #526bdf);
+    box-shadow: 0 5px 18px rgba(91, 109, 231, 0.25);
+}
+.dialogos-page #fight-btn:hover:not(:disabled) { box-shadow: 0 7px 22px rgba(91, 109, 231, 0.4); }
+.dialogos-page #reset-btn {
+    align-self: auto;
+    color: #adb4d0;
+    border: 1px solid #3a4163;
+    border-radius: 9px;
+    padding: 0.62rem 0.75rem;
+}
+.dialogos-page #reset-btn:hover:not(:disabled) { color: #fff; border-color: #717da9; }
+.dialogos-page .dual-inputs { gap: 0.8rem; }
+.dialogos-page .dual-inputs > div {
+    min-width: 0;
+    padding: 0.8rem;
+    background: rgba(11, 13, 25, 0.46);
+    border: 1px solid #343a5d;
+    border-radius: 13px;
+}
+.dialogos-page .dual-inputs > div:first-child { border-top: 2px solid var(--groq); }
+.dialogos-page .dual-inputs > div:last-child { border-top: 2px solid var(--gemini); }
+.dialogos-page .dual-inputs label {
+    display: block;
+    margin-bottom: 0.55rem;
+    font-size: 0.86rem;
+}
+.dialogos-page textarea {
+    display: block;
+    min-height: 116px;
+    resize: vertical;
+    background: #171b30;
+    color: #f0f2ff;
+    border: 1px solid #41496e;
+    border-radius: 9px;
+    padding: 0.8rem;
+    line-height: 1.55;
+}
+.dialogos-page textarea:focus {
+    border-color: #8d9bff;
+    box-shadow: 0 0 0 3px rgba(125, 141, 255, 0.16);
+}
+.dialogos-page .options {
+    gap: 0.9rem;
+    padding: 0.65rem 0.8rem;
+    background: #13172a;
+    border-color: #343a5d;
+}
+.dialogos-page .file-name { color: #a7b3df; }
+.dialogos-page .lines { color: #b5bdd9; }
+.dialogos-page .lines input {
+    background: #1b2037;
+    color: var(--text);
+    border-color: #41496e;
+}
+.dialogos-page .hint {
+    margin: 0;
+    color: #929ab9;
+    line-height: 1.5;
+}
+.arena-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.8rem;
+    margin: 1.6rem 0 0.75rem;
+}
+.arena-heading-text { display: flex; flex-wrap: wrap; align-items: center; gap: 0.8rem; }
+.arena-heading-text > span:last-child { color: #929ab9; font-size: 0.86rem; }
+.dialogos-page .arena { margin-top: 0; gap: 0.8rem; }
+.dialogos-page .card {
+    min-height: 300px;
+    background: rgba(23, 26, 43, 0.92);
+    border-color: #343a5d;
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.16);
+}
+.dialogos-page .card header { background: rgba(255, 255, 255, 0.015); }
+.dialogos-page .answer { line-height: 1.65; }
+.dialogos-page footer { color: #747d9e; }
+
+@media (max-width: 600px) {
+    .dialogos-page .hero { padding-top: 0.65rem; }
+    .dialogos-page .hero-img { width: min(155px, 48%); }
+    .dialogos-page .prompt-head { align-items: flex-start; flex-direction: column; }
+    .dialogos-page #fight-btn { width: 100%; }
+    .dialogos-page .options { align-items: flex-start; flex-direction: column; }
+    .dialogos-page .lines { margin-left: 0; }
+    .arena-heading { align-items: flex-start; flex-direction: column; }
+}

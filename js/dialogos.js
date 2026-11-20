@@ -4,6 +4,7 @@ const CONFIG = window.APP_CONFIG || {};
 const GROQ_MODEL = CONFIG.groqModel || "openai/gpt-oss-120b";
 const GEMINI_MODEL = CONFIG.geminiModel || "gemini-3.5-flash-lite";
 const TIMEOUT_MS = 120000;
+const OPENING_PROMPT = "Defiende, sin cambiar de opinión durante todo el careo, que ";
 
 const $ = (id) => document.getElementById(id);
 
@@ -219,7 +220,7 @@ function resetAll() {
         $(`badge-${f.id}`).textContent = "";
         $(`copy-${f.id}`).disabled = true;
         $(`card-${f.id}`).classList.remove("error");
-        $(`prompt-${f.id}`).value = "";
+        $(`prompt-${f.id}`).value = OPENING_PROMPT;
         $(`prompt-${f.id}`).placeholder = `Tema y postura que defiende ${f.id === "groq" ? "Groq" : "Gemini"}…`;
     });
     $("round-info").textContent = "Ronda 0";

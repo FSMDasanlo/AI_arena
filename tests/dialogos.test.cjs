@@ -124,3 +124,16 @@ test("reset discards an incomplete round", async () => {
     assert.equal(groq.length, 1);
     assert.equal(groq[0].content, "Nuevo Groq");
 });
+
+test("reset restores the opening prompt for the next challenge", async () => {
+    const app = createDialog({ groq: ["Groq"], gemini: ["Gemini"] });
+    app.context.resetAll();
+    const openingPrompt = "Defiende, sin cambiar de opinión durante todo el careo, que ";
+    assert.equal(app.element("prompt-groq").value, openingPrompt);
+    assert.equal(app.element("prompt-gemini").value, openingPrompt);
+    app.element("prompt-groq").value += "los libros son mejores que las películas";
+    app.element("prompt-gemini").value += "los libros son mejores que las películas";
+
+    await app.context.nextRound();
+    assert.equal(app.calls[0].body.messages[0].content, `${openingPrompt}los libros son mejores que las películas`);
+});

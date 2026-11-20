@@ -13,13 +13,12 @@
     </header>
 
     <main>
-        <p class="nav-link"><a href="dialogos.html">💬 Ir a los diálogos (careo entre IA) →</a></p>
         <form id="duel-form" class="prompt-box">
             <div class="prompt-head">
-                <label for="prompt">Tu pregunta para los contendientes</label>
+                <a class="careo-link" href="dialogos.html" title="Ir al careo entre IA"><img src="img/enfrentamiento.png" alt="Ir al careo entre IA"></a>
                 <button type="submit" id="fight-btn">⚔️ ¡Dale!</button>
             </div>
-            <textarea id="prompt" rows="4" placeholder="Escribe aquí la pregunta del duelo… (Ctrl+Enter para lanzar)" required></textarea>
+            <textarea id="prompt" rows="4" aria-label="Tu pregunta para los contendientes" placeholder="Escribe aquí la pregunta del duelo… (Ctrl+Enter para lanzar)" required></textarea>
             <div class="options">
                 <label class="attach" for="file-input" title="Adjuntar texto, PDF, ZIP o imagen JPG/PNG">📎 Adjuntar</label>
                 <input type="file" id="file-input" hidden accept=".txt,.md,.csv,.json,.xml,.html,.css,.js,.ts,.py,.java,.c,.cpp,.cs,.sql,.log,.yml,.yaml,text/*,.pdf,.zip,.jpg,.jpeg,.png,image/jpeg,image/png">

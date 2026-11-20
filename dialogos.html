@@ -7,7 +7,7 @@
     <link rel="icon" href="img/gemini.svg" type="image/svg+xml">
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body class="dialogos-page">
     <header class="hero">
         <img src="img/ai_arena.png" alt="AI Arena 2" class="hero-img">
     </header>
@@ -15,22 +15,29 @@
     <main>
         <p class="nav-link"><a href="index.html">← Volver al duelo</a></p>
 
+        <section class="dialog-intro">
+            <span class="dialog-eyebrow">MODO CAREO</span>
+            <h1>Dos IA. Una postura. <span>Cero concesiones.</span></h1>
+            <p>Elige qué defender y observa cómo cada contendiente mantiene su argumento ronda tras ronda.</p>
+        </section>
+
         <form id="dialog-form" class="prompt-box">
             <div class="prompt-head">
-                <label>Careo: cada IA defiende su postura</label>
-                <span>
-                    <button type="submit" id="fight-btn">⚔️ ¡Al careo!</button>
-                    <button type="button" id="reset-btn" class="link-btn" title="Empezar un careo nuevo">🔄 Nuevo</button>
-                </span>
+                <div class="prompt-title">
+                    <span class="step-label">01 / PLANTEAMIENTO</span>
+                    <h2>¿Qué postura van a defender?</h2>
+                    <p>Completa el inicio de la frase en las dos cajas.</p>
+                </div>
+                <button type="button" id="reset-btn" class="link-btn" title="Empezar un careo nuevo">🔄 Nuevo</button>
             </div>
             <div class="dual-inputs">
                 <div>
                     <label for="prompt-groq">Groq</label>
-                    <textarea id="prompt-groq" rows="4" placeholder="Tema y postura que defiende Groq… (Ctrl+Enter para lanzar)"></textarea>
+                    <textarea id="prompt-groq" rows="4">Defiende, sin cambiar de opinión durante todo el careo, que </textarea>
                 </div>
                 <div>
                     <label for="prompt-gemini">Gemini</label>
-                    <textarea id="prompt-gemini" rows="4" placeholder="Tema y postura que defiende Gemini… (Ctrl+Enter para lanzar)"></textarea>
+                    <textarea id="prompt-gemini" rows="4">Defiende, sin cambiar de opinión durante todo el careo, que </textarea>
                 </div>
             </div>
             <div class="options">
@@ -39,9 +46,16 @@
                     <input type="number" id="max-lines" min="1" max="500" value="5" placeholder="sin límite">
                 </label>
             </div>
-            <small class="hint">Tras la primera ronda, cada IA recibe la última respuesta de la otra. Lo que escribas en su caja se añade como matiz (opcional).</small>
+            <small class="hint">En las siguientes rondas, cada IA responderá a la última intervención de la otra. Puedes añadir un matiz si quieres orientar la réplica. Pulsa Ctrl+Enter para lanzar el careo.</small>
         </form>
 
+        <div class="arena-heading">
+            <div class="arena-heading-text">
+                <span class="step-label">02 / EL CAREO</span>
+                <span>Las respuestas aparecen ronda a ronda</span>
+            </div>
+            <button type="submit" id="fight-btn" form="dialog-form">⚔️ ¡Al careo!</button>
+        </div>
         <section class="arena">
             <article class="card" id="card-groq">
                 <header>
